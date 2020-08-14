@@ -29,9 +29,15 @@ public class Member {
     }
 
     public Member(long id, String name) {
+        this(id, name, new Address());
+    }
+
+    public Member(Long id, String name, Address address) {
         this.id = id;
         this.name = name;
+        this.address = address;
     }
+
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
