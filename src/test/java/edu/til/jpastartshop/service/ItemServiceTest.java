@@ -5,6 +5,7 @@ import edu.til.jpastartshop.repository.ItemRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -34,11 +35,14 @@ class ItemServiceTest {
     @MockBean
     ItemRepository itemRepository;
 
+    @MockBean
+    CategoryService categoryService;
+
     ItemService itemService;
 
     @BeforeAll
     public void init() {
-        itemService = new ItemService(itemRepository);
+        itemService = new ItemService(itemRepository, categoryService);
     }
 
     @Test
@@ -52,6 +56,21 @@ class ItemServiceTest {
         assertNotNull(created);
         verify(itemRepository, times(1)).save(item);
     }
+
+    @Test
+    public void givenItemAndCategoryThenReturnCreatedItem() {
+        Item item = new Item(1L, "서큘레이터", 134000, 99);
+        long categoryId = 1L;
+
+        when(itemRepository.save(item)).thenReturn(item);
+
+        Item created = itemService.create(item, categoryId);
+
+        assertNotNull(created);
+        verify(itemRepository, times(1)).save(item);
+    }
+
+
 
     @Test
     public void givenItemWithExistedIdThenThrowsException() {

@@ -1,5 +1,6 @@
 package edu.til.jpastartshop.service;
 
+import edu.til.jpastartshop.domain.Category;
 import edu.til.jpastartshop.domain.Item;
 import edu.til.jpastartshop.repository.ItemRepository;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,11 @@ import java.util.NoSuchElementException;
 public class ItemService {
 
     ItemRepository itemRepository;
+    CategoryService categoryService;
 
-    public ItemService(ItemRepository itemRepository) {
+    public ItemService(ItemRepository itemRepository, CategoryService categoryService) {
         this.itemRepository = itemRepository;
+        this.categoryService = categoryService;
     }
 
     public Item create(Item item) {
@@ -22,6 +25,14 @@ public class ItemService {
         }
 
         return itemRepository.save(item);
+    }
+
+    public Item create(Item item, long categoryId) {
+        Item created = create(item);
+        Category category = categoryService.findById(categoryId);
+        created.getCategories().add(category);
+
+        return created;
     }
 
     public Item findById(long itemId) {
@@ -47,6 +58,7 @@ public class ItemService {
         item.decreaseStock(decrease);
         return item;
     }
+
 
 
 }
